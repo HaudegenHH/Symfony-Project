@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% form_theme commentForm 'bootstrap_4_layout.html.twig'  %}
+{% block title %}{{ conference.title }} | Kommentare{% endblock %}
+
+{% block body %}  
+  <style>
+        .conference {
+            border-radius: 10px;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, .25);
+            margin: 20px 0;
+            padding: 20px;
+        }
+        img {
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+        h2 {
+          margin-top: 40px;
+        }
+    </style>
+
+    <section class="conference">        
+        <article>
+            <h2>{{ conference.title }}</h2>
+            <div class="metadata">
+                <span>{{ conference.city }}, {{ conference.year }}</span>                
+                <span class="{{ conference.international ? 'bg-success' : 'bg-info'}} badge">{{ conference.international ? 'internationales' : 'nationales' }} Event</span>
+                <span>5 Kommentare</span>
+            </div>
+            <div class="content">
+                <img src="https://picsum.photos/seed/picsum/600/400" alt="random-static-image">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nihil incidunt doloremque tenetur vitae autem labore praesentium sit voluptate cumque maiores repellat, ea aliquid ullam beatae veritatis atque eos veniam!</p>                
+            </div>
+        </article>    
+    </section>
+
+    <h2>Füge einen Kommentar hinzu</h2>
+    
+    <section class="conference">        
+        {{ form_start(commentForm) }}    
+        {{ form_widget(commentForm) }}
+          <button class="btn btn-success mt-2">Hinzufügen</button>
+        {{ form_end(commentForm) }}   
+    </section>
+
+    <h2>5 Kommentare</h2>
+
+    {% for comment in comments %}     
+      <section>
+          <div class="card text-white bg-primary mt-4 mb-3">
+            <div class="card-header">            
+                <small><strong>Author: {{ comment.author }}</strong></small><br>
+                <small><strong>Email: {{ comment.email }}</strong></small>                        
+              </p>
+            </div>
+            <div class="card-body">
+              <h5 class="card-text">{{ comment.content }}</h5>
+              <div class="d-flex w-100 justify-content-between">
+                <span></span>
+                <span class="text-muted"><strong>geschrieben am {{ comment.createdAt | date('d. M. Y') }} um {{ comment.createdAt | date('H:i') }} Uhr</strong></span>            
+              </div> 
+            </div>
+          </div>
+      </section>
+    {% endfor %}
+
+    <div class="navigation mt-5 mb-5">
+        {{ knp_pagination_render(comments) }}
+    </div>
+
+{% endblock %}

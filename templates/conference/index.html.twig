@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conferences | Dashboard{% endblock %}
+
+{% block body %}
+    <style>
+        .conferences {
+            border-radius: 10px;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, .25);
+            margin: 20px 0;
+            padding: 20px;
+        }
+        img {
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+    </style>
+
+    
+    {% for conference in conferences %}
+
+        <section class="conferences">
+            <article>
+                <h2>{{ conference.title }}</h2>
+                <div class="metadata">
+                    <span>{{ conference.city }}, {{ conference.year }} </span>
+                    {# <span class="badge bg-warning">Lokales Event</span> #}
+                    <span class="{{ conference.international ? 'bg-success' : 'bg-info'}} badge">{{ conference.international ? 'internationales' : 'nationales' }} Event</span>
+                    <span>5 Kommentare</span>
+                </div>
+                <div class="content">
+                    <img src="https://picsum.photos/seed/picsum/600/400" alt="random-static-image">
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nihil incidunt doloremque tenetur vitae autem labore praesentium sit voluptate cumque maiores repellat, ea aliquid ullam beatae veritatis atque eos veniam!</p>
+                    
+                    <a href="{{ path('app_comments', { id: conference.id }) }}"  class="btn btn-success btn-lg">Zu den Kommentaren</a>
+
+                </div>
+            </article>    
+        </section>
+    {% endfor %}
+
+    <div class="navigation mt-5 mb-5">
+        {{ knp_pagination_render(conferences) }}
+    </div>
+
+{% endblock %}
