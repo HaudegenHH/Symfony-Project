@@ -19,7 +19,13 @@
         }
     </style>
 
-    <section class="conference">        
+    {% for message in app.flashes('success') %}
+      <div class="flash-success alert alert-success text-center mt-4">
+        {{ message }}
+      </div>      
+    {% endfor %}
+
+      <section class="conference">        
         <article>
             <h2>{{ conference.title }}</h2>
             <div class="metadata">
@@ -45,13 +51,13 @@
 
     <h2>5 Kommentare</h2>
 
+
     {% for comment in comments %}     
       <section>
           <div class="card text-white bg-primary mt-4 mb-3">
             <div class="card-header">            
-                <small><strong>Author: {{ comment.author }}</strong></small><br>
-                <small><strong>Email: {{ comment.email }}</strong></small>                        
-              </p>
+                <small><strong>Author: {{ comment.author ?? 'anonymous' }}</strong></small><br>
+                <small><strong>Email: {{ comment.email ?? 'anonymous' }}</strong></small>
             </div>
             <div class="card-body">
               <h5 class="card-text">{{ comment.content }}</h5>

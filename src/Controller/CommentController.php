@@ -17,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class CommentController extends AbstractController {
 
     #[Route('/conferences/{id}/comments', name: 'app_comments')]
-    public function index(ManagerRegistry $doctrine, Request $request, Conference $conference, CommentRepository $commentsRepository, PaginatorInterface $paginator): Response {
+    public function index(ManagerRegistry $doctrine, Request $request, Conference $conference, CommentRepository $commentsRepository, PaginatorInterface $paginator, $id): Response {
 
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -31,6 +31,10 @@ class CommentController extends AbstractController {
             $em = $doctrine->getManager();
             $em->persist($comment);
             $em->flush();
+
+            $this->addFlash('success', 'Kommentar wurde erfolgreich gespeichert');
+
+            return $this->redirectToRoute('app_comments', ['id' => $id, 'page' => 1]);
         }
 
         $comments = $paginator->paginate(
