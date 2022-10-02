@@ -23,19 +23,7 @@ class CommentController extends AbstractController {
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
-            $comment = $form->getData();
-            $comment->setCreatedAt(new DateTimeImmutable());
-            $comment->setConference($conference);
-            
-            $em = $doctrine->getManager();
-            $em->persist($comment);
-            $em->flush();
-
-            $this->addFlash('success', 'Kommentar wurde erfolgreich gespeichert');
-
-            return $this->redirectToRoute('app_comments', ['id' => $id, 'page' => 1]);
-        }
+        $this->addComment($form, $comment, $conference, $id, $doctrine);
 
         $comments = $paginator->paginate(
             $commentsRepository->findBy(['conference' => $conference], ['createdAt' => 'DESC']), 
@@ -49,5 +37,22 @@ class CommentController extends AbstractController {
             'commentForm' => $form->createView()
         ]);
     }   
+
+    private function addComment($form, $comment, $conference, $id, $doctrine) {
+
+        if($form->isSubmitted() && $form->isValid()){
+            $comment = $form->getData();
+            $comment->setCreatedAt(new DateTimeImmutable());
+            $comment->setConference($conference);
+            
+            $em = $doctrine->getManager();
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Kommentar wurde erfolgreich gespeichert');
+
+            return $this->redirectToRoute('app_comments', ['id' => $id, 'page' => 1]);
+        }
+    }
 
 }

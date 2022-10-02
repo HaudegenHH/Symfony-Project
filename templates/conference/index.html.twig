@@ -26,7 +26,7 @@
                     <span>{{ conference.city }}, {{ conference.year }} </span>
                     {# <span class="badge bg-warning">Lokales Event</span> #}
                     <span class="{{ conference.international ? 'bg-success' : 'bg-info'}} badge">{{ conference.international ? 'internationales' : 'nationales' }} Event</span>
-                    <span>{{ conference.comments | length }} Kommentare</span>
+                    <span>{{ conference.comments | length }} Kommentar{{ conference.comments | length == 1 ? '' : 'e' }}</span>
                 </div>
                 <div class="content">
                     <img src="https://picsum.photos/seed/picsum/600/400" alt="random-static-image">
