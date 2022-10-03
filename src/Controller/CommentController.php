@@ -7,7 +7,6 @@ use App\Entity\Conference;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,22 +17,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController {
 
 
-    public function __construct(EntityManagerInterface $em) {
-        $this->em = $em;
+    public function __construct(CommentRepository $commentRepository) {
+        $this->commentRepository = $commentRepository;
     }
 
 
     #[Route('/conferences/{id}/comments', name: 'app_comments')]
-    public function index(Request $request, Conference $conference, CommentRepository $commentsRepository, PaginatorInterface $paginator, $id): Response {
+    public function index(Request $request, Conference $conference, PaginatorInterface $paginator, $id): Response {
 
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        $this->addComment($form, $comment, $conference, $id);
+        $this->addComment($form, $comment, $conference, $id, $request);
 
         $comments = $paginator->paginate(
-            $commentsRepository->findBy(['conference' => $conference], ['createdAt' => 'DESC']), 
+            $this->commentRepository->findBy(['conference' => $conference], ['createdAt' => 'DESC']), 
             $request->query->getInt('page', 1), 
             2   
         );
@@ -52,9 +51,8 @@ class CommentController extends AbstractController {
             $comment->setCreatedAt(new DateTimeImmutable());
             $comment->setConference($conference);
             
-            $this->em->persist($comment);
-            $this->em->flush();
-
+            $this->commentRepository->save($comment, true);
+            
             $this->addFlash('success', 'Kommentar wurde erfolgreich gespeichert');
 
             return $this->redirectToRoute('app_comments', ['id' => $id, 'page' => 1]);
